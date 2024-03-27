@@ -11,7 +11,7 @@ const getClientes = async (req, res = response) => {
         Cliente
                 .find({estado: true},'cedula nombre_completo direccion celular correo tipo_cliente img usuario estado')
                 .skip(from)
-                .limit(5)
+                .limit(limit)
                 .sort({nombre_completo: 1}),
         Cliente.countDocuments()
     ]);
