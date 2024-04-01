@@ -5,13 +5,13 @@ const Usuario = require('../models/usuario');
 const { generarJWT } = require('../helpers/jwt')
 const { validarMongoID } = require('../middlewares/validar-mongoid');
 
-const getUsuarios = async (req, res = response) => {
+const getUsuarios = async ( req, res = response) => {
 
     //const from = Number(req.query.from)||0;
  
     const [usuarios, total] = await Promise.all([
         Usuario
-                .find({},'email nombre role img')
+                .find({},'')
                 .skip(0)
                 .limit(5),
         Usuario.countDocuments()
@@ -25,7 +25,7 @@ const getUsuarios = async (req, res = response) => {
 
 }
 
-const guardarUsuario = async(req, res = response) => {
+const guardarUsuario = async(req = request, res = response) => {
     
     const { email, password } = req.body;
 

@@ -3,21 +3,19 @@ const Usuario = require('../models/usuario');
 const Tema = require('../models/tema');
 const Subtema = require('../models/subtema');
 
-
-
 const fs = require('fs');
 
-const borrarImgAnterior = ( path ) => {
-    if(fs.existsSync(path)){
-        fs.unlinkSync(path);
+const borrarImgAnterior = ( type ) => {
+    if(fs.existsSync(type)){
+        fs.unlinkSync(type);
     }
 }
 
-const actualizarImagen = async(path, id, fileName)=> {
+const actualizarImagen = async(type, id, fileName)=> {
 
     let oldPath = '';
 
-    switch (path) {
+    switch (type) {
         case 'clientes':
 
             const cliente = await Cliente.findById(id);

@@ -20,9 +20,12 @@ const UsuarioSchema = Schema({
         required: true,
         default: 'USER_ROLE'
     },
-    img: {
-        type: String
-    },
+    img_public_id: {
+        type: String,
+    },  
+    img_secure_url: {
+        type: String,
+    },  
     estado: {
         type: Boolean,
         required: true,

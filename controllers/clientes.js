@@ -9,7 +9,7 @@ const getClientes = async (req, res = response) => {
 
     const [clientes, total] = await Promise.all([
         Cliente
-                .find({estado: true},'cedula nombre_completo direccion celular correo tipo_cliente img usuario estado')
+                .find({estado: true},'')
                 .skip(from)
                 .limit(limit)
                 .sort({nombre_completo: 1}),

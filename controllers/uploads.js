@@ -1,9 +1,18 @@
 const { response, request } = require("express");
-const { v4: uuidv4 } = require('uuid');
-const { actualizarImagen } = require("../helpers/actualizar-imagen");
-const { validarMongoID } = require("../middlewares/validar-mongoid");
 const path = require('path');
+
+const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
+
+const { actualizarImagen } = require("../helpers/actualizar-imagen");
+const { cloudUploadFile } = require('../helpers/cloudinary');
+
+const { validarMongoID } = require("../middlewares/validar-mongoid");
+
+const Cliente = require('../models/cliente');
+const Usuario = require('../models/usuario');
+const Tema = require('../models/tema');
+const Subtema = require('../models/subtema');
 
 const uploadFile = (req = request, res = response) => {
 
@@ -50,9 +59,8 @@ const uploadFile = (req = request, res = response) => {
 
     const storePath = `./uploads/${type}/${fileName}`;
 
-
     actualizarImagen(type, id, fileName).then(
-        result => {
+        async result => {
             if(result){
                 file.mv(storePath, (err) =>{
                     if(err){
@@ -63,10 +71,12 @@ const uploadFile = (req = request, res = response) => {
                         });
                     }     
                 });
+                const uploadResult = await uploadToCloudinary(id, type, fileName);
                 res.json({
                     ok: true,
                     msg: 'Archivo subido corréctamente',
-                    fileName
+                    fileName,
+                    url: uploadResult
                 });
             }else{
                 return res.status(500).json({
@@ -83,8 +93,6 @@ const getImage = ( req, res ) =>{
     const type = req.params.type;
     const foto = req.params.foto;
 
-   
-
     const pathImg = path.join(__dirname, `../uploads/${type}/${foto}`);
     
     if(fs.existsSync(pathImg)){
@@ -93,6 +101,57 @@ const getImage = ( req, res ) =>{
         const pathNoImg = path.join(__dirname, `../uploads/no-image.jpg`);
         res.sendFile(pathNoImg);
     }
+
+}
+
+const uploadToCloudinary = async (id, type, filename) => {
+
+    const urlFileToUpload = path.join(__dirname, `../uploads/${type}/${filename}`);
+
+    try {
+
+        const uploadResult = await cloudUploadFile(urlFileToUpload, type);
+
+        switch (type) {
+            case 'clientes':
+                
+                await Cliente.findByIdAndUpdate(id,{
+                    img_public_id: uploadResult.public_id,
+                    img_secure_url: uploadResult.secure_url
+                });
+    
+                return uploadResult.secure_url;
+    
+            case 'usuarios':
+    
+                await Usuario.findByIdAndUpdate(id,{
+                    img_public_id: uploadResult.public_id,
+                    img_secure_url: uploadResult.secure_url
+                });
+    
+                return uploadResult.secure_url;
+    
+            case 'temas':
+               
+                await Tema.findByIdAndUpdate(id,{
+                    img_public_id: uploadResult.public_id,
+                    img_secure_url: uploadResult.secure_url
+                });
+                return uploadResult.secure_url;
+    
+            case 'subtemas':
+                
+                await Subtema.findByIdAndUpdate(id,{
+                    img_public_id: uploadResult.public_id,
+                    img_secure_url: uploadResult.secure_url
+                });
+                return uploadResult.secure_url;
+        }
+        
+    } catch (error) {
+        console.error(error);
+    }    
+
 
 }
 

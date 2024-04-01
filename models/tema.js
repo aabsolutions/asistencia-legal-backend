@@ -13,9 +13,12 @@ const TemaSchema = Schema({
         type: String,
         required: true
     },
-    adjunto: {
-        type: String
-    },
+    img_public_id: {
+        type: String,
+    },  
+    img_secure_url: {
+        type: String,
+    },  
     cliente: {
         type: Schema.Types.ObjectId,
         ref: 'Cliente'

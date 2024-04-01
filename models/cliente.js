@@ -28,7 +28,10 @@ const ClienteSchema = Schema({
         enum: ['NATURAL', 'JURIDICO'],
         required: true
     },
-    img: {
+    img_public_id: {
+        type: String,
+    },  
+    img_secure_url: {
         type: String,
     },  
     usuario: {
